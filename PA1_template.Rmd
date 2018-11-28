@@ -6,20 +6,66 @@ output:
 ---
 
 
-## Loading and preprocessing the data
+#assignment
+
+### unzip data and reading data
+```{r}
+library("data.table")
+library(ggplot2)
+setwd("C:/Users/DELL/Desktop")
+tareqkh<-read.csv("activity.csv",header = TRUE,sep=",")
+
+```
+##mean of total numbers of steps taken per day 
+```{r}
+totalsteps<-tapply(tareqkh$steps,tareqkh$date,sum,na.rm=TRUE)
+hist(totalsteps,main = "histogram of steps per day",col = "red")
+
+```
+###the total mean and median of steps per day
+```{r}
+meanofsteps<-mean(totalsteps)
+print(c("the mean steps per day is:",meanofsteps))
+medianofsteps<-median(totalsteps)
+print(c("the median steps per day is:",medianofsteps))
+```
+###time series plot of the average number of steps taken
+```{r}
+mnint<-tapply(tareqkh$steps,tareqkh$interval,mean,na.rm=TRUE)
+plot(mnint~unique(tareqkh$interval),type = "l",xlab = "5 min interval",col="green")
+```
+
+
+###imputing missing data(NA)
+```{r}
+table(is.na(tareqkh)==TRUE)
+summary(tareqkh)
+###there is 2304 minnsing data(NA)
+```
+```{r}
+withoutmissingvalue <- na.omit(tareqkh)
+tar<-tapply(withoutmissingvalue$steps,withoutmissingvalue$date,sum,na.rm=TRUE)
+hist(tar,xlab = "sum of steps per day",main = "histogram of steps per day(without missing value)",col = "blue")
+```
 
 
 
-## What is mean total number of steps taken per day?
 
+###mean and median without missing value
+```{r}
+ meantar<-mean(tar,na.rm = TRUE)
+print(c("the mean is :",meantar))
+mediantar<-median(tar,na.rm = TRUE)
+print(c("the median is:",mediantar))
+```
 
+### Weekday and Weekend
+```{r}
+library(lattice)
+withoutmissingvalue$date <- as.Date(withoutmissingvalue$date)
+weekdays1 <- c('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday')
+withoutmissingvalue$wDay <- factor((weekdays(withoutmissingvalue$date) %in% weekdays1),levels=c(FALSE, TRUE), labels=c('weekend', 'weekday'))
+withoutmissingvalue$wDay <- c('weekend', 'weekday')[(weekdays(withoutmissingvalue$date) %in% weekdays1)+1L]
 
-## What is the average daily activity pattern?
+```
 
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
